@@ -4,10 +4,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import io.github.ytg1234.recipeconditions.impl.condition.base.RecipeConditionParameterImpl;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * This class represents a parameter that can be fed into a {@link RecipeCondition}
+ * Represents a parameter that can be fed into a {@link RecipeCondition}
  * to later match.
  * <p>
  * It contains some helper methods as well.
@@ -15,24 +16,17 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author YTG1234
  */
-public final class RecipeConditionParameter {
-    @NotNull
-    private final JsonElement value;
-
-    public RecipeConditionParameter(@NotNull JsonElement json) {
-        this.value = json;
-    }
-
+public interface RecipeConditionParameter {
     /**
      * A utility method, shortcut, to create a new
      * instance using a {@link JsonPrimitive}.
      *
-     * @param string string that is the param
+     * @param i integer that is the param
      *
-     * @return new parameter instance
+     * @return new parameter instance.
      */
-    public static RecipeConditionParameter createString(@NotNull String string) {
-        return createJsonElement(new JsonPrimitive(string));
+    static RecipeConditionParameter createInt(int i) {
+        return createJsonElement(new JsonPrimitive(i));
     }
 
     /**
@@ -43,59 +37,38 @@ public final class RecipeConditionParameter {
      *
      * @return new parameter instance
      */
-    public static RecipeConditionParameter createJsonElement(@NotNull JsonElement json) {
-        return new RecipeConditionParameter(json);
+    @NotNull
+    static RecipeConditionParameter createJsonElement(@NotNull JsonElement json) {
+        return new RecipeConditionParameterImpl(json);
     }
+
 
     /**
      * A utility method, shortcut, to create a new
      * instance using a {@link JsonPrimitive}.
      *
-     * @param i integer that is the param
+     * @param string string that is the param
      *
-     * @return new parameter instance.
+     * @return new parameter instance
      */
-    public static RecipeConditionParameter createInt(int i) {
-        return createJsonElement(new JsonPrimitive(i));
-    }
-
     @NotNull
-    public JsonElement getValue() {
-        return value;
+    static RecipeConditionParameter createString(@NotNull String string) {
+        return createJsonElement(new JsonPrimitive(string));
     }
 
-    // region I'd use extension functions if this was Kotlin
-    public String string() {
-        return value.getAsString();
-    }
+    JsonElement getValue();
 
-    public int integer() {
-        return value.getAsInt();
-    }
+    String string();
 
-    public double doublePersicion() {
-        return value.getAsDouble();
-    }
+    int integer();
 
-    public float floatingPoint() {
-        return value.getAsFloat();
-    }
+    double doublePrecision();
 
-    public JsonObject object() {
-        return value.getAsJsonObject();
-    }
+    float floatingPoint();
 
-    public boolean bool() {
-        return value.getAsBoolean();
-    }
+    JsonObject object();
 
-    public JsonArray array() {
-        return value.getAsJsonArray();
-    }
-    // endregion
+    boolean bool();
 
-    @Override
-    public String toString() {
-        return value.toString();
-    }
+    JsonArray array();
 }
