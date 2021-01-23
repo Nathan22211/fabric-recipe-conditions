@@ -5,17 +5,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.github.ytg1234.recipeconditions.api.condition.base.RecipeCondition;
 import io.github.ytg1234.recipeconditions.api.condition.base.RecipeConditionParameter;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * This class represents a parameter that can be fed into a {@link RecipeCondition}
- * to later match.
- * <p>
- * It contains some helper methods as well.
- * </p>
- *
- * @author YTG1234
- */
+@ApiStatus.Internal
 public final class RecipeConditionParameterImpl implements RecipeConditionParameter {
     @NotNull
     private final JsonElement value;

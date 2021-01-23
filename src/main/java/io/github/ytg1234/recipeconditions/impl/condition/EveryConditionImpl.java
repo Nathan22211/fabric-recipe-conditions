@@ -3,10 +3,12 @@ package io.github.ytg1234.recipeconditions.impl.condition;
 import io.github.ytg1234.recipeconditions.RecipeCondsConstants;
 import io.github.ytg1234.recipeconditions.api.condition.EveryCondition;
 import io.github.ytg1234.recipeconditions.api.condition.SingleCondition;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.util.collection.DefaultedList;
 
+@ApiStatus.Internal
 public final class EveryConditionImpl implements EveryCondition {
     @NotNull
     private final DefaultedList<SingleCondition> conditions;

@@ -10,6 +10,7 @@ import io.github.ytg1234.recipeconditions.RecipeCondsConstants;
 import io.github.ytg1234.recipeconditions.api.condition.AnyCondition;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.util.Identifier;
 
@@ -19,6 +20,7 @@ import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.VersionParsingException;
 import net.fabricmc.loader.util.version.VersionPredicateParser;
 
+@ApiStatus.Internal
 public final class ImplUtils {
     public static final String CONDITIONS_MEMBER = "frc:conditions";
     private static final Logger logger = LogManager.getLogger("Recipe Conditions");

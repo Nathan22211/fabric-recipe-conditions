@@ -2,6 +2,9 @@ package io.github.ytg1234.recipeconditions.impl.util;
 
 import java.util.Map;
 
+import org.jetbrains.annotations.ApiStatus;
+
+@ApiStatus.Internal
 public final class MapEntryImpl<K, V> implements Map.Entry<K, V> {
     private final K key;
     private V value;
