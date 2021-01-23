@@ -4,9 +4,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import io.github.ytg1234.recipeconditions.RecipeCondsConstants;
-import net.minecraft.util.collection.DefaultedList;
+import io.github.ytg1234.recipeconditions.impl.condition.AnyConditionImpl;
 import org.jetbrains.annotations.NotNull;
+
+import net.minecraft.util.collection.DefaultedList;
 
 /**
  * Represents an array of {@link EveryCondition}s - The highest level
@@ -14,18 +15,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author YTG1234
  */
-public final class AnyCondition {
-    /**
-     * The internal array of {@link EveryCondition}s, which is used when
-     * matching.
-     */
-    @NotNull
-    private final DefaultedList<EveryCondition> conditions;
-
-    public AnyCondition(@NotNull DefaultedList<EveryCondition> conditions) {
-        this.conditions = conditions;
-    }
-
+public interface AnyCondition {
     /**
      * Parses a Json array into a simple list of {@link EveryCondition}s.
      *
@@ -33,13 +23,14 @@ public final class AnyCondition {
      *
      * @return the parsed form of the array
      */
-    public static AnyCondition fromJson(@NotNull JsonArray array) {
+    @NotNull
+    static AnyCondition fromJson(@NotNull JsonArray array) {
         DefaultedList<EveryCondition> list = DefaultedList.of();
         for (JsonElement element : array) {
             if (!(element instanceof JsonObject)) throw new JsonParseException("Conditions must be objects!");
             list.add(EveryCondition.fromJson((JsonObject) element));
         }
-        return new AnyCondition(list);
+        return new AnyConditionImpl(list);
     }
 
     /**
@@ -47,13 +38,7 @@ public final class AnyCondition {
      *
      * @return whether the array matches
      */
-    public boolean check() {
-        RecipeCondsConstants.LOGGER.debug("Checking an AnyCondition...");
-        return getConditions().stream().anyMatch(EveryCondition::check);
-    }
+    boolean check();
 
-    @NotNull
-    public DefaultedList<EveryCondition> getConditions() {
-        return conditions;
-    }
+    @NotNull DefaultedList<EveryCondition> getConditions();
 }

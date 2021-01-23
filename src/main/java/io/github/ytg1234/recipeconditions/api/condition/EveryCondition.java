@@ -1,12 +1,13 @@
 package io.github.ytg1234.recipeconditions.api.condition;
 
+import java.util.Map;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import io.github.ytg1234.recipeconditions.RecipeCondsConstants;
-import net.minecraft.util.collection.DefaultedList;
+import io.github.ytg1234.recipeconditions.impl.condition.EveryConditionImpl;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
+import net.minecraft.util.collection.DefaultedList;
 
 /**
  * Represents a list of {@link SingleCondition}s, that all
@@ -14,14 +15,7 @@ import java.util.Map;
  *
  * @author YTG1234
  */
-public final class EveryCondition {
-    @NotNull
-    private final DefaultedList<SingleCondition> conditions;
-
-    public EveryCondition(@NotNull DefaultedList<SingleCondition> conditions) {
-        this.conditions = conditions;
-    }
-
+public interface EveryCondition {
     /**
      * Parses a Json object to a list of {@link SingleCondition}s.
      *
@@ -29,12 +23,13 @@ public final class EveryCondition {
      *
      * @return the parsed representation
      */
-    public static EveryCondition fromJson(JsonObject object) {
+    @NotNull
+    static EveryCondition fromJson(JsonObject object) {
         DefaultedList<SingleCondition> list = DefaultedList.of();
         for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
             list.add(SingleCondition.fromJson(entry));
         }
-        return new EveryCondition(list);
+        return new EveryConditionImpl(list);
     }
 
     /**
@@ -42,13 +37,7 @@ public final class EveryCondition {
      *
      * @return whether they match
      */
-    public boolean check() {
-        RecipeCondsConstants.LOGGER.debug("Checking an EveryCondition...");
-        return getConditions().stream().allMatch(SingleCondition::check);
-    }
+    boolean check();
 
-    @NotNull
-    public DefaultedList<SingleCondition> getConditions() {
-        return conditions;
-    }
+    @NotNull DefaultedList<SingleCondition> getConditions();
 }

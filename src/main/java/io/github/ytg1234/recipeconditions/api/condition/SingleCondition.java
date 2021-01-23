@@ -1,17 +1,18 @@
 package io.github.ytg1234.recipeconditions.api.condition;
 
+import java.util.Map;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import io.github.ytg1234.recipeconditions.RecipeCondsConstants;
 import io.github.ytg1234.recipeconditions.api.RecipeConds;
 import io.github.ytg1234.recipeconditions.api.condition.base.RecipeCondition;
 import io.github.ytg1234.recipeconditions.api.condition.base.RecipeConditionParameter;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.collection.DefaultedList;
+import io.github.ytg1234.recipeconditions.impl.condition.SingleConditionImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.DefaultedList;
 
 /**
  * Represents a Json entry that specifies a condition identifier
@@ -19,44 +20,7 @@ import java.util.Map;
  *
  * @author YTG1234
  */
-public final class SingleCondition {
-    @NotNull
-    private final RecipeCondition condition;
-    @Nullable
-    private final RecipeConditionParameter param;
-    @Nullable
-    private final DefaultedList<RecipeConditionParameter> params;
-
-    private final boolean negated;
-
-    public SingleCondition(@NotNull RecipeCondition condition, @NotNull RecipeConditionParameter param) {
-        this(condition, param, false);
-    }
-
-    public SingleCondition(
-            @NotNull RecipeCondition condition, @NotNull RecipeConditionParameter param, boolean negated
-                          ) {
-        this.condition = condition;
-        this.param = param;
-        this.params = null;
-        this.negated = negated;
-    }
-
-    public SingleCondition(
-            @NotNull RecipeCondition condition, @NotNull DefaultedList<RecipeConditionParameter> params
-                          ) {
-        this(condition, params, false);
-    }
-
-    public SingleCondition(
-            @NotNull RecipeCondition condition, @NotNull DefaultedList<RecipeConditionParameter> params, boolean negated
-                          ) {
-        this.condition = condition;
-        this.params = params;
-        this.param = null;
-        this.negated = negated;
-    }
-
+public interface SingleCondition {
     /**
      * Parses a Json entry to get the condition and value(s) from it.
      *
@@ -64,7 +28,8 @@ public final class SingleCondition {
      *
      * @return the new representation of the entry
      */
-    public static SingleCondition fromJson(@NotNull Map.Entry<String, JsonElement> entry) {
+    @NotNull
+    static SingleCondition fromJson(@NotNull Map.Entry<String, JsonElement> entry) {
         if (entry.getValue().isJsonArray()) {
             DefaultedList<RecipeConditionParameter> values = DefaultedList.of();
             for (JsonElement element : entry.getValue().getAsJsonArray()) {
@@ -75,11 +40,9 @@ public final class SingleCondition {
             Identifier conditionId = new Identifier(entry.getKey().replace("!", ""));
             RecipeCondition condition = RecipeConds.RECIPE_CONDITION.get(conditionId);
             if (condition == null) {
-                throw new JsonParseException(new IllegalArgumentException("Unknown condition " +
-                                                                          conditionId.toString() +
-                                                                          "!"));
+                throw new JsonParseException(new IllegalArgumentException("Unknown condition " + conditionId.toString() + "!"));
             }
-            return new SingleCondition(condition, values, negated);
+            return new SingleConditionImpl(condition, values, negated);
         } else {
             JsonElement value = entry.getValue();
             boolean negated = false;
@@ -87,11 +50,9 @@ public final class SingleCondition {
             Identifier conditionId = new Identifier(entry.getKey().replace("!", ""));
             RecipeCondition condition = RecipeConds.RECIPE_CONDITION.get(conditionId);
             if (condition == null) {
-                throw new JsonParseException(new IllegalArgumentException("Unknown condition " +
-                                                                          conditionId.toString() +
-                                                                          "!"));
+                throw new JsonParseException(new IllegalArgumentException("Unknown condition " + conditionId.toString() + "!"));
             }
-            return new SingleCondition(condition, RecipeConditionParameter.createJsonElement(value), negated);
+            return new SingleConditionImpl(condition, RecipeConditionParameter.createJsonElement(value), negated);
         }
     }
 
@@ -100,31 +61,17 @@ public final class SingleCondition {
      *
      * @return whether the condition matched
      */
-    public boolean check() {
-        RecipeCondsConstants.LOGGER.debug("Checking condition " + RecipeConds.RECIPE_CONDITION.getId(condition) + " , SingleCondition inverted: " + negated);
-        if (getParam() != null) {
-            RecipeCondsConstants.LOGGER.debug("Param is not null, " + param.toString());
-            return negated != condition.check(param);
-        } else if (getParams() != null) {
-            RecipeCondsConstants.LOGGER.debug("Params is not null, " + params.toString());
-            return negated != getParams().stream().allMatch(condition::check);
-        } else {
-            throw new IllegalStateException("How did this happen? params and param are null!");
-        }
-    }
+    boolean check();
 
-    @Nullable
-    public RecipeConditionParameter getParam() {
-        return param;
-    }
+    @Nullable RecipeConditionParameter getParam();
 
-    @Nullable
-    public DefaultedList<RecipeConditionParameter> getParams() {
-        return params;
-    }
+    @Nullable DefaultedList<RecipeConditionParameter> getParams();
 
-    @NotNull
-    public RecipeCondition getCondition() {
-        return condition;
-    }
+    @NotNull RecipeCondition getCondition();
+
+    /**
+     * Checks if this condition should be inverted when checking.
+     * @return if the condition is negated
+     */
+    boolean isNegated();
 }
