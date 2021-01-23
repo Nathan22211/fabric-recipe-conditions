@@ -1,8 +1,9 @@
 package io.github.ytg1234.recipeconditions.impl.registry;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import io.github.ytg1234.recipeconditions.RecipeCondsConstants;
 import io.github.ytg1234.recipeconditions.api.RecipeConds;
-import io.github.ytg1234.recipeconditions.api.condition.SingleCondition;
 import io.github.ytg1234.recipeconditions.api.condition.base.RecipeCondition;
 import io.github.ytg1234.recipeconditions.api.condition.util.RecipeCondsUtil;
 import io.github.ytg1234.recipeconditions.impl.util.ImplUtils;
@@ -17,8 +18,7 @@ public final class RecipeConditions {
     public static final RecipeCondition MOD_LOADED = register("mod_loaded", modid -> FabricLoader.getInstance().isModLoaded(modid.string()));
     public static final RecipeCondition MOD_LOADED_ADVANCMED = register("mod_loaded_advanced", RecipeCondsUtil.objectParam(object -> {
         return ImplUtils.modVersionLoaded(object.get("id").getAsString(), object.get("version").getAsString());
-    }));
-    // parens (it's worse with an expression lambda expression)!
+    })); // parens (it's worse with an expression lambda expression)!
 
     // region Registry Conditions
     public static final RecipeCondition ITEM_REGISTERED = register("item", Registry.ITEM);
@@ -74,9 +74,10 @@ public final class RecipeConditions {
 
     // region logic gates
     public static final RecipeCondition NAND = register("nand", RecipeCondsUtil.everyConditionParam(list -> !list.check()));
-    public static final RecipeCondition XOR = register("xor", RecipeCondsUtil.everyConditionParam(list -> {
-
-        return true;
+    public static final RecipeCondition XOR = register("xor", RecipeCondsUtil.everyConditionParam(list -> { // in this case, XOR means ONLY ONE. If you want "not all", use NAND.
+        final AtomicBoolean acc = new AtomicBoolean(false);
+        list.getConditions().forEach(condition -> acc.set(acc.get() ^ condition.check()));
+        return acc.get();
     }));
     // endregion
 
