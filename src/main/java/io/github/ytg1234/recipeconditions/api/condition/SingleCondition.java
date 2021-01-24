@@ -25,7 +25,8 @@ public interface SingleCondition {
     /**
      * Parses a Json entry to get the condition and value(s) from it.
      *
-     * @param entry the Json entry to parse
+     * @param entry  the Json entry to parse
+     * @param recipe the recipe that this entry is in
      *
      * @return the new representation of the entry
      */
@@ -74,6 +75,7 @@ public interface SingleCondition {
 
     /**
      * Checks if this condition should be inverted when checking.
+     *
      * @return if the condition is negated
      */
     boolean isNegated();

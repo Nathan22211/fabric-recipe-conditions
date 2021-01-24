@@ -21,6 +21,7 @@ public interface EveryCondition {
      * Parses a Json object to a list of {@link SingleCondition}s.
      *
      * @param object the object to be parsed
+     * @param recipe the recipe that this condition object is in
      *
      * @return the parsed representation
      */

@@ -20,6 +20,7 @@ public interface AnyCondition {
      * Parses a Json array into a simple list of {@link EveryCondition}s.
      *
      * @param array the array to be parsed
+     * @param recipe the recipe that this condition array is in
      *
      * @return the parsed form of the array
      */

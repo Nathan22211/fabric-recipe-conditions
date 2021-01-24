@@ -82,8 +82,10 @@ public final class RecipeConditions {
     }));
     // endregion
 
-    // region ingredients
-    public static final RecipeCondition RECIPE_ID_IS = register("recipe_id_is", (param, recipe) -> recipe.getId().equals(new Identifier(param.string())));
+    // region recipe stuff
+    public static final RecipeCondition RECIPE_ID_IS = register("recipe_id_is", (param, recipe) -> {
+        return recipe.getId().equals(new Identifier(param.string()));
+    });
     // endregion
 
     static {
