@@ -12,7 +12,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeManager;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -54,8 +57,10 @@ public final class ImplUtils {
             Map.Entry<Identifier, JsonElement> entry = recipes.next();
             logger.info("Attempting to load recipe " + entry.getKey().toString());
 
+            Recipe<?> recipe = RecipeManager.deserialize(entry.getKey(), JsonHelper.asObject(entry.getValue(), "top element"));
+
             try {
-                if (shouldRemoveRecipe(entry)) recipes.remove();
+                if (shouldRemoveRecipe(entry, recipe)) recipes.remove();
             } catch (JsonParseException e) {
                 throw new JsonParseException("Failed to load recipe " + entry.getKey().toString() + "!", e);
             }
@@ -71,19 +76,18 @@ public final class ImplUtils {
      *
      * @throws JsonParseException if the recipe has a conditions property but parsing it failed
      */
-    private static boolean shouldRemoveRecipe(Map.Entry<Identifier, JsonElement> entry) throws JsonParseException {
-        JsonElement recipe = entry.getValue();
+    private static boolean shouldRemoveRecipe(Map.Entry<Identifier, JsonElement> entry, Recipe<?> recipe) throws JsonParseException {
+        JsonElement recipeJson = entry.getValue();
 
-        if (!recipe.isJsonObject()) return false;
-        if (!recipe.getAsJsonObject().has(CONDITIONS_MEMBER)) return false;
+        if (!recipeJson.isJsonObject()) return false;
+        if (!recipeJson.getAsJsonObject().has(CONDITIONS_MEMBER)) return false;
 
         logger.debug("Recipe " + entry.getKey().toString() + " has a " + CONDITIONS_MEMBER + " property.");
-        AnyCondition conditions = AnyCondition.fromJson(recipe.getAsJsonObject().get(CONDITIONS_MEMBER).getAsJsonArray());
+        AnyCondition conditions = AnyCondition.fromJson(recipeJson.getAsJsonObject().get(CONDITIONS_MEMBER).getAsJsonArray(), recipe);
         if (!conditions.check()) {
             logger.debug("Conditions didn't match, removing recipe " + entry.getKey().toString());
             return true;
         }
-
         return false;
     }
 }

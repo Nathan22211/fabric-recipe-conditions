@@ -14,8 +14,9 @@ import net.minecraft.util.registry.Registry;
 
 import net.fabricmc.loader.api.FabricLoader;
 
+@SuppressWarnings("unused")
 public final class RecipeConditions {
-    public static final RecipeCondition MOD_LOADED = register("mod_loaded", modid -> FabricLoader.getInstance().isModLoaded(modid.string()));
+    public static final RecipeCondition MOD_LOADED = register("mod_loaded", (modid, recipe) -> FabricLoader.getInstance().isModLoaded(modid.string()));
     public static final RecipeCondition MOD_LOADED_ADVANCMED = register("mod_loaded_advanced", RecipeCondsUtil.objectParam(object -> {
         return ImplUtils.modVersionLoaded(object.get("id").getAsString(), object.get("version").getAsString());
     })); // parens (it's worse with an expression lambda expression)!
@@ -79,6 +80,10 @@ public final class RecipeConditions {
         list.getConditions().forEach(condition -> acc.set(acc.get() ^ condition.check()));
         return acc.get();
     }));
+    // endregion
+
+    // region ingredients
+    public static final RecipeCondition RECIPE_ID_IS = register("recipe_id_is", (param, recipe) -> recipe.getId().equals(new Identifier(param.string())));
     // endregion
 
     static {

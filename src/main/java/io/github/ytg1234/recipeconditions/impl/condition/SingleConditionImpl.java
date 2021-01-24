@@ -9,45 +9,46 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.recipe.Recipe;
 import net.minecraft.util.collection.DefaultedList;
 
 @ApiStatus.Internal
 public final class SingleConditionImpl implements SingleCondition {
-    @NotNull
     private final RecipeCondition condition;
-    @Nullable
     private final RecipeConditionParameter param;
-    @Nullable
     private final DefaultedList<RecipeConditionParameter> params;
+    private final Recipe<?> recipe;
 
     private final boolean negated;
 
-    public SingleConditionImpl(@NotNull RecipeCondition condition, @NotNull RecipeConditionParameter param) {
-        this(condition, param, false);
+    public SingleConditionImpl(@NotNull RecipeCondition condition, @NotNull RecipeConditionParameter param, @NotNull Recipe<?> recipe) {
+        this(condition, param, false, recipe);
     }
 
     public SingleConditionImpl(
-            @NotNull RecipeCondition condition, @NotNull RecipeConditionParameter param, boolean negated
+            @NotNull RecipeCondition condition, @NotNull DefaultedList<RecipeConditionParameter> params, @NotNull Recipe<?> recipe
     ) {
-        this.condition = condition;
-        this.param = param;
-        this.params = null;
-        this.negated = negated;
+        this(condition, params, false, recipe);
     }
 
     public SingleConditionImpl(
-            @NotNull RecipeCondition condition, @NotNull DefaultedList<RecipeConditionParameter> params
-    ) {
-        this(condition, params, false);
-    }
-
-    public SingleConditionImpl(
-            @NotNull RecipeCondition condition, @NotNull DefaultedList<RecipeConditionParameter> params, boolean negated
+            @NotNull RecipeCondition condition, @NotNull DefaultedList<RecipeConditionParameter> params, boolean negated, @NotNull Recipe<?> recipe
     ) {
         this.condition = condition;
         this.params = params;
         this.param = null;
         this.negated = negated;
+        this.recipe = recipe;
+    }
+
+    public SingleConditionImpl(
+            @NotNull RecipeCondition condition, @NotNull RecipeConditionParameter param, boolean negated, @NotNull Recipe<?> recipe
+    ) {
+        this.condition = condition;
+        this.param = param;
+        this.params = null;
+        this.negated = negated;
+        this.recipe = recipe;
     }
 
     @Override
@@ -58,10 +59,10 @@ public final class SingleConditionImpl implements SingleCondition {
                                           negated);
         if (getParam() != null) {
             RecipeCondsConstants.LOGGER.debug("Param is not null, " + param.toString());
-            return negated != condition.check(param);
+            return negated != condition.check(param, recipe);
         } else if (getParams() != null) {
             RecipeCondsConstants.LOGGER.debug("Params is not null, " + params.toString());
-            return negated != getParams().stream().allMatch(condition::check);
+            return negated != getParams().stream().allMatch(param -> condition.check(param, recipe));
         } else {
             throw new IllegalStateException("How did this happen? params and param are null!");
         }
@@ -83,6 +84,11 @@ public final class SingleConditionImpl implements SingleCondition {
     @Override
     public RecipeCondition getCondition() {
         return condition;
+    }
+
+    @Override
+    public @NotNull Recipe<?> getRecipe() {
+        return recipe;
     }
 
     @Override

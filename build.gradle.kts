@@ -10,10 +10,10 @@ object Globals {
     const val version = "0.4.0"
 
     const val mcVer = "1.16.5"
-    const val yarnBuild = "1"
+    const val yarnBuild = "3"
 
-    const val loaderVer = "0.11.0"
-    const val fapiVer = "0.29.1+1.16"
+    const val loaderVer = "0.11.1"
+    const val fapiVer = "0.29.3+1.16"
 
     const val modrinthId = "SfG9lyVw"
     const val unstable = false

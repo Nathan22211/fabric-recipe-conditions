@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import io.github.ytg1234.recipeconditions.impl.condition.EveryConditionImpl;
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.recipe.Recipe;
 import net.minecraft.util.collection.DefaultedList;
 
 /**
@@ -24,12 +25,12 @@ public interface EveryCondition {
      * @return the parsed representation
      */
     @NotNull
-    static EveryCondition fromJson(JsonObject object) {
+    static EveryCondition fromJson(@NotNull JsonObject object, @NotNull Recipe<?> recipe) {
         DefaultedList<SingleCondition> list = DefaultedList.of();
         for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
-            list.add(SingleCondition.fromJson(entry));
+            list.add(SingleCondition.fromJson(entry, recipe));
         }
-        return new EveryConditionImpl(list);
+        return new EveryConditionImpl(list, recipe);
     }
 
     /**
@@ -40,4 +41,6 @@ public interface EveryCondition {
     boolean check();
 
     @NotNull DefaultedList<SingleCondition> getConditions();
+
+    @NotNull Recipe<?> getRecipe();
 }

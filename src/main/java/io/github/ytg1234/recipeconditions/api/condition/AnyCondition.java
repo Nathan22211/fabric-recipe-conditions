@@ -2,11 +2,11 @@ package io.github.ytg1234.recipeconditions.api.condition;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import io.github.ytg1234.recipeconditions.impl.condition.AnyConditionImpl;
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.recipe.Recipe;
 import net.minecraft.util.collection.DefaultedList;
 
 /**
@@ -24,13 +24,13 @@ public interface AnyCondition {
      * @return the parsed form of the array
      */
     @NotNull
-    static AnyCondition fromJson(@NotNull JsonArray array) {
+    static AnyCondition fromJson(@NotNull JsonArray array, @NotNull Recipe<?> recipe) {
         DefaultedList<EveryCondition> list = DefaultedList.of();
         for (JsonElement element : array) {
-            if (!(element instanceof JsonObject)) throw new JsonParseException("Conditions must be objects!");
-            list.add(EveryCondition.fromJson((JsonObject) element));
+            if (element.isJsonObject()) throw new JsonParseException("Conditions must be objects!");
+            list.add(EveryCondition.fromJson(element.getAsJsonObject(), recipe));
         }
-        return new AnyConditionImpl(list);
+        return new AnyConditionImpl(list, recipe);
     }
 
     /**
@@ -41,4 +41,6 @@ public interface AnyCondition {
     boolean check();
 
     @NotNull DefaultedList<EveryCondition> getConditions();
+
+    @NotNull Recipe<?> getRecipe();
 }

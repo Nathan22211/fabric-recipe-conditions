@@ -35,7 +35,7 @@ public final class RecipeCondsUtil {
      */
     @NotNull
     public static RecipeCondition stringParam(Predicate<String> cond) {
-        return param -> cond.test(param.string());
+        return (param, recipe) -> cond.test(param.string());
     }
 
     /**
@@ -48,7 +48,7 @@ public final class RecipeCondsUtil {
      */
     @NotNull
     public static RecipeCondition boolParam(Predicate<Boolean> cond) {
-        return param -> cond.test(param.bool());
+        return (param, recipe) -> cond.test(param.bool());
     }
 
     /**
@@ -61,7 +61,7 @@ public final class RecipeCondsUtil {
      */
     @NotNull
     public static RecipeCondition intParam(Predicate<Integer> cond) {
-        return param -> cond.test(param.integer());
+        return (param, recipe) -> cond.test(param.integer());
     }
 
     /**
@@ -74,7 +74,7 @@ public final class RecipeCondsUtil {
      */
     @NotNull
     public static RecipeCondition floatParam(Predicate<Float> cond) {
-        return param -> cond.test(param.floatingPoint());
+        return (param, recipe) -> cond.test(param.floatingPoint());
     }
 
     /**
@@ -87,7 +87,7 @@ public final class RecipeCondsUtil {
      */
     @NotNull
     public static RecipeCondition arrayParam(Predicate<JsonArray> cond) {
-        return param -> cond.test(param.array());
+        return (param, recipe) -> cond.test(param.array());
     }
 
     /**
@@ -100,7 +100,7 @@ public final class RecipeCondsUtil {
      */
     @NotNull
     public static RecipeCondition objectParam(Predicate<JsonObject> cond) {
-        return param -> cond.test(param.object());
+        return (param, recipe) -> cond.test(param.object());
     }
 
     /**
@@ -113,9 +113,9 @@ public final class RecipeCondsUtil {
      */
     @NotNull
     public static RecipeCondition singleConditionParam(Predicate<SingleCondition> cond) { // higher-order conditions
-        return param -> {
+        return (param, recipe) -> {
             JsonObject obj = param.object();
-            SingleCondition singleCondition = SingleCondition.fromJson(new MapEntryImpl<>(obj.get("id").getAsString(), obj.get("param")));
+            SingleCondition singleCondition = SingleCondition.fromJson(new MapEntryImpl<>(obj.get("id").getAsString(), obj.get("param")), recipe);
             return cond.test(singleCondition);
         };
     }
@@ -130,6 +130,6 @@ public final class RecipeCondsUtil {
      */
     @NotNull
     public static RecipeCondition everyConditionParam(Predicate<EveryCondition> cond) { // This will probably allow XOR condition if someone smart will do that
-        return param -> cond.test(EveryCondition.fromJson(param.object()));
+        return (param, recipe) -> cond.test(EveryCondition.fromJson(param.object(), recipe));
     }
 }

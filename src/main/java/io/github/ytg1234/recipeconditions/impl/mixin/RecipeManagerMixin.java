@@ -19,7 +19,7 @@ public abstract class RecipeManagerMixin {
     @Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)V", at = @At("HEAD"))
     private void processConditions(
             Map<Identifier, JsonElement> map, ResourceManager resourceManager, Profiler profiler, CallbackInfo ci
-                                  ) {
+    ) {
         ImplUtils.tryLoadRecipes(map);
     }
 }

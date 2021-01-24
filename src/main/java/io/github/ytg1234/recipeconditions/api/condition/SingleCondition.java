@@ -11,6 +11,7 @@ import io.github.ytg1234.recipeconditions.impl.condition.SingleConditionImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.recipe.Recipe;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 
@@ -29,7 +30,7 @@ public interface SingleCondition {
      * @return the new representation of the entry
      */
     @NotNull
-    static SingleCondition fromJson(@NotNull Map.Entry<String, JsonElement> entry) {
+    static SingleCondition fromJson(@NotNull Map.Entry<String, JsonElement> entry, @NotNull Recipe<?> recipe) {
         if (entry.getValue().isJsonArray()) {
             DefaultedList<RecipeConditionParameter> values = DefaultedList.of();
             for (JsonElement element : entry.getValue().getAsJsonArray()) {
@@ -42,7 +43,7 @@ public interface SingleCondition {
             if (condition == null) {
                 throw new JsonParseException(new IllegalArgumentException("Unknown condition " + conditionId.toString() + "!"));
             }
-            return new SingleConditionImpl(condition, values, negated);
+            return new SingleConditionImpl(condition, values, negated, recipe);
         } else {
             JsonElement value = entry.getValue();
             boolean negated = false;
@@ -52,7 +53,7 @@ public interface SingleCondition {
             if (condition == null) {
                 throw new JsonParseException(new IllegalArgumentException("Unknown condition " + conditionId.toString() + "!"));
             }
-            return new SingleConditionImpl(condition, RecipeConditionParameter.createJsonElement(value), negated);
+            return new SingleConditionImpl(condition, RecipeConditionParameter.createJsonElement(value), negated, recipe);
         }
     }
 
@@ -68,6 +69,8 @@ public interface SingleCondition {
     @Nullable DefaultedList<RecipeConditionParameter> getParams();
 
     @NotNull RecipeCondition getCondition();
+
+    @NotNull Recipe<?> getRecipe();
 
     /**
      * Checks if this condition should be inverted when checking.
