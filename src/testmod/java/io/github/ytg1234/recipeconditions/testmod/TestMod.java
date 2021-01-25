@@ -2,11 +2,13 @@ package io.github.ytg1234.recipeconditions.testmod;
 
 import io.github.ytg1234.recipeconditions.api.RecipeConds;
 import io.github.ytg1234.recipeconditions.api.condition.util.RecipeCondsUtil;
-import net.fabricmc.api.ModInitializer;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+
+import net.fabricmc.api.ModInitializer;
 
 public class TestMod implements ModInitializer {
     public static Logger logger = LogManager.getLogger("TestMod");
