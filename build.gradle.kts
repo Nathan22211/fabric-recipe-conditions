@@ -13,7 +13,7 @@ object Globals {
     const val yarnBuild = "3"
 
     const val loaderVer = "0.11.1"
-    const val fapiVer = "0.29.3+1.16"
+    const val fapiVer = "0.29.4+1.16"
 
     const val modrinthId = "SfG9lyVw"
     const val unstable = false
