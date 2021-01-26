@@ -28,7 +28,7 @@ public interface AnyCondition {
     static AnyCondition fromJson(@NotNull JsonArray array, @NotNull Recipe<?> recipe) {
         DefaultedList<EveryCondition> list = DefaultedList.of();
         for (JsonElement element : array) {
-            if (element.isJsonObject()) throw new JsonParseException("Conditions must be objects!");
+            if (!element.isJsonObject()) throw new JsonParseException("Conditions must be objects!");
             list.add(EveryCondition.fromJson(element.getAsJsonObject(), recipe));
         }
         return new AnyConditionImpl(list, recipe);
