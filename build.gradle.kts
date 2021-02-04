@@ -1,3 +1,12 @@
+buildscript {
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath("org.jfrog.buildinfo:build-info-extractor-gradle:4.+")
+	}
+}
+
 plugins {
     id("fabric-loom") version "0.5-SNAPSHOT"
     `maven-publish`
@@ -7,7 +16,7 @@ plugins {
 object Globals {
     const val grp = "io.github.ytg1234"
     const val abn = "fabric-recipe-conditions"
-    const val version = "0.4.0"
+    const val version = "0.5-SNAPSHOT"
 
     const val mcVer = "1.16.5"
     const val yarnBuild = "3"
@@ -150,3 +159,5 @@ publishing {
         maven(url = System.getenv("MAVEN_REPO"))
     }
 }
+
+apply(from = "https://raw.githubusercontent.com/YTG1234/scripts/main/scripts/gradle/artifactory.gradle")
