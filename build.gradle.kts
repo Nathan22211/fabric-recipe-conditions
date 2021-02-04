@@ -154,10 +154,6 @@ publishing {
             }
         }
     }
-
-    repositories {
-        maven(url = System.getenv("MAVEN_REPO"))
-    }
 }
 
 apply(from = "https://raw.githubusercontent.com/YTG1234/scripts/main/scripts/gradle/artifactory.gradle")
