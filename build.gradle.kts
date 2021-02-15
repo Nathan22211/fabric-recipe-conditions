@@ -82,6 +82,13 @@ tasks {
 
     withType<JavaCompile> {
         options.encoding = "UTF-8"
+
+        if (JavaVersion.current().isJava9Compatible) {
+            options.compilerArgs.addAll(listOf("--release", "8"))
+        } else {
+            sourceCompatibility = "8"
+            targetCompatibility = "8"
+        }
     }
 
     register<Jar>("sourcesJar") {
@@ -130,13 +137,9 @@ tasks {
         project.tasks.getByName("publishModrinth").mustRunAfter(publish)
     }
 
-    withType(JavaCompile::class).configureEach {
-        if (JavaVersion.current().isJava9Compatible) {
-            options.compilerArgs.addAll(listOf("--release", "8"))
-        } else {
-            sourceCompatibility = "8"
-            targetCompatibility = "8"
-        }
+    withType<Wrapper> {
+        gradleVersion = "6.8.2"
+        distributionType = Wrapper.DistributionType.ALL
     }
 }
 
